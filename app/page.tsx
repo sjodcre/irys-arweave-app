@@ -3,16 +3,34 @@ import { useState } from "react";
 
 export default function Home() {
   const [data, setData] = useState('')
-  async function upload(){
+  // async function upload(){
+  //   // if (!data) return
+
+  //   try {
+  //     const response = await fetch('api/upload', {
+  //       method: 'POST',
+  //       body: JSON.stringify(data),
+  //     })
+  //     const json = await response.json()
+  //     console.log('json:', json)
+  //   } catch (error){
+  //     console.log({error})
+  //   }
+  // }
+
+  async function upload() {
+    if (!data) return
     try {
-      const response = await fetch('api/upload', {
+      setData('')
+      const response = await fetch('/api/upload', {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(data), 
       })
-      const json = await response.json
+      const json = await response.json()
       console.log('json:', json)
-    } catch (error){
-      console.log({error})
+      // setTransaction(json.txId)
+    } catch(err) {
+      console.log({ err })
     }
   }
   return (
