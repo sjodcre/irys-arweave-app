@@ -35,15 +35,19 @@ const MIN_FUNDS = 0.05;
 export async function POST(req: NextRequest) {
     try {
         const data = await req.json()
-        const bundlr = new Bundlr("http://node1.bundlr.network", "matic", process.env.BNDLR_KEY)
+        const bundlr = new Bundlr("https://node2.bundlr.network", "matic", process.env.BNDLR_KEY)
         await bundlr.ready()
-        // let balance = await bundlr.getLoadedBalance()
-        // let readableBalance = bundlr.utils.fromAtomic(balance).toNumber()
-        // console.log(`Your balance is: ${readableBalance.toString()} MATIC`);
+        let balance = await bundlr.getLoadedBalance()
+        let readableBalance = bundlr.utils.fromAtomic(balance).toNumber()
+        console.log(`Your balance is: ${readableBalance.toString()} MATIC`);
 
         // if (readableBalance < MIN_FUNDS) {
-        //   await bundlr.fund(TOP_UP);
+        //     console.log("not enough need to fund")
+        //     const res = await bundlr.fund(TOP_UP);
+        //     console.log("Fund statu", res)
         // }
+        //funding not working for now, use https://demo.bundlr.network/for bundlr fund
+        // console.log("finished funding")
       
         const tx = await bundlr.upload(data, {
           tags: [{ name: 'Content-Type', value: 'application/json' }],
