@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'
-import Bundlr from '@bundlr-network/client'
+import Irys from "@irys/sdk";
 
 const TOP_UP = '200000000000000000'; // 0.2 MATIC
 const MIN_FUNDS = 0.05
@@ -8,20 +8,24 @@ export async function POST(req: NextRequest) {
   const body = await req.arrayBuffer()
   const buffer = Buffer.from(body)
 
-  const bundlr = new Bundlr("http://node1.bundlr.network", "matic", process.env.BNDLR_KEY)
-  await bundlr.ready()
+  const network = "mainnet"
+  const token = "matic"
+  const key = process.env.BNDLR_KEY
+  const irys = new Irys({ network, token, key });
 
-//   let balance = await bundlr.getLoadedBalance()
-//   let readableBalance = bundlr.utils.fromAtomic(balance).toNumber()
+  let balance = await irys.getLoadedBalance()
+    let readableBalance = irys.utils.fromAtomic(balance).toNumber()
+    console.log(`Your balance is: ${readableBalance.toString()} MATIC`);
 
-//   if (readableBalance < MIN_FUNDS) {
-//     await bundlr.fund(TOP_UP);
-//   }
+    if (readableBalance < MIN_FUNDS) {
+        console.log("not enough need to fund")
+        const res = await irys.fund(TOP_UP);
+        console.log("Fund status", res)
+    }
+    console.log("finished funding")
 
-    //funding not working for now, use https://demo.bundlr.network/for bundlr fund
 
-
-  const tx = await bundlr.upload(buffer, {
+  const tx = await irys.upload(buffer, {
     tags: [{ name: "Content-Type", value: 'image/png' }]
   })
   
