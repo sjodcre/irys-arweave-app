@@ -1,29 +1,36 @@
-import Bundlr from "@bundlr-network/client";
-import { read } from "fs";
+import Irys from "@irys/sdk";
 import { NextRequest, NextResponse } from "next/server";
 
-const MIN_FUNDS = 0;
-const amountInAR = 0.02;
-const amountInWinston = amountInAR * 1000000000000;
+const TOP_UP = '200000000000000000'; // 0.2 MATIC
+const MIN_FUNDS = 0.01;
 
+export async function POST(req: NextRequest) {
+    try {
+        const data = await req.json()
+        const network = "mainnet"
+        const token = "arweave"
+        const key = JSON.parse((process.env.BNDLR_KEY_AR|| '').toString());
+        const irys = new Irys({ network, token, key});
 
-export async function POST (req: NextRequest) {
-    const data = await req.json()
-    // console.log('key value', process.env.BNDLR_KEY)
-    const bundlr = new Bundlr("https://node1.irys.xyz", "arweave", process.env.BNDLR_KEY);
-    await bundlr.ready()
+        let balance = await irys.getLoadedBalance()
+        let readableBalance = irys.utils.fromAtomic(balance).toNumber()
+        console.log(`Your balance is: ${readableBalance.toString()} AR`);
 
-    let balance = await bundlr.getLoadedBalance()
-    console.log(`Your balance is: ${balance.toString()} winston`);
-    let readableBalance = bundlr.utils.fromAtomic(balance).toNumber()
+        if (readableBalance < MIN_FUNDS) {
+            console.log("not enough need to fund")
+            const res = await irys.fund(irys.utils.toAtomic(0.02));
+            console.log("Fund status", res)
+        }
+        console.log("finished funding")
 
-    if (readableBalance < MIN_FUNDS) {
-        await bundlr.fund(amountInWinston)
+        const tx = await irys.upload(data, {
+            tags: [{ name: 'Content-Type', value: 'application/json' }],
+        })
+
+        return NextResponse.json({ txId: `https://arweave.net/${tx.id}` })
+
+    } catch (err) {
+        console.log("error trying to upload", err)
     }
 
-    const tx = await bundlr.upload(data, {
-        tags: [{ name: 'Content-Type', value: 'application/json'}],
-    })
-
-    return NextResponse.json({ txId: `https:arweave.net/${tx.id}`})
-}
+  }
