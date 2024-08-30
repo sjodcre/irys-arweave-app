@@ -7,6 +7,8 @@ This project shows a simple UI for user to upload text/file to Arweave, and retu
 ## Getting Started
 First run npm install to install then dependencies.
 
+Next, put your Arweave wallet credentials in the  .env file under BNDLR_KEY_AR. (ALWAYS MAKE SURE TO INCLUDE .env INSIDE .gitignore to avoid uploading wallet credentials)
+
 Then, run the development server:
 
 ```bash
