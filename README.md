@@ -1,8 +1,13 @@
+## Upload text/file to Arweave using @irys/sdk
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+This project shows a simple UI for user to upload text/file to Arweave, and returning the transaction ID of the upload.
 
-First, run the development server:
+## Getting Started
+First run npm install to install then dependencies.
+
+Then, run the development server:
 
 ```bash
 npm run dev
